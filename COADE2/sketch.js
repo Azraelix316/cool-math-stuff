@@ -19,6 +19,9 @@ function setup() {
   planets[1] = new Planet(3.28500e27,createVector(5.79e10*distanceScale,0,0),createVector(0.0,1000*47.36 * timeScale * distanceScale,0.0),1,10);
   planets[2] = new Planet(1e24,createVector(1.08e11*distanceScale,0,0),createVector(0.0,1000*35.02*timeScale*distanceScale,0.0),2,10);
   background(0);
+  for (let i=0;i<planetsCount;i++) {
+    planets[i].push();
+  }
 }
 
 
@@ -33,6 +36,7 @@ function draw() {
   }
   for (let i=0;i<planetsCount;i++) {
   planets[i].update();
+  if (frameCount % 100==99) planets[i].pop();
   }
 
 }
@@ -71,6 +75,20 @@ translate(this.position);
 ellipse(0,0,this.size);
 pop();
 }
+
+push() {
+this.stashVel=(this.velocity).copy();
+this.stashPos=this.position.copy();
+this.stashAccel=this.acceleration.copy();
+}
+
+pop() {
+this.velocity=this.stashVel.copy();
+this.position=this.stashPos.copy();
+this.acceleration=this.stashAccel.copy();
+}
+
+
 }
 
 
