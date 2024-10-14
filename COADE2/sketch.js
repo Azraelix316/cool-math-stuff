@@ -30,15 +30,25 @@ function draw() {
   background(0);
   fill(255);
   stroke(255);
+
   for (let i=0;i<planetsCount;i++) {
   planets[i].gravity();
   planets[i].display();
   }
   for (let i=0;i<planetsCount;i++) {
   planets[i].update();
-  if (frameCount % 100==99) planets[i].pop();
   }
+}
 
+function pushAll() {
+  for (let i=0;i<planetsCount;i++) {
+    planets[i].push();
+    }
+}
+function popAll() {
+  for (let i=0;i<planetsCount;i++) {
+    planets[i].pop();
+    }
 }
 
 class Planet {
