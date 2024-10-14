@@ -16,8 +16,8 @@ function setup() {
   g*=distanceScale*distanceScale*distanceScale*timeScale*timeScale;
   createCanvas(windowWidth, windowHeight,WEBGL);
   planets[0] = new Planet(1.98900e30,createVector(0,0,0),createVector(0.0,0.0,0.0),0,10);
-  planets[1] = new Planet(3.28500e27,createVector(5.79e10*distanceScale,0,0),createVector(0.0,1000*47.36 * timeScale * distanceScale,0.0),1,10);
-  planets[2] = new Planet(1e24,createVector(1.08e11*distanceScale,0,0),createVector(0.0,1000*35.02*timeScale*distanceScale,0.0),2,10);
+  planets[1] = new Planet(3.28500e27,createVector(5.79e10*distanceScale,0,0),createVector(0.0,1000*47.36 * timeScale * distanceScale,0.0),1,1);
+  planets[2] = new Planet(1e24,createVector(1.08e11*distanceScale,0,0),createVector(0.0,1000*35.02*timeScale*distanceScale,0.0),2,2);
   background(0);
   for (let i=0;i<planetsCount;i++) {
     planets[i].push();
@@ -30,14 +30,23 @@ function draw() {
   background(0);
   fill(255);
   stroke(255);
+  pushAll();
+  for (let j=0;j<88;j++) {
+  update();
+  }
+  popAll();
+  update();
+}
 
+
+function update() {
   for (let i=0;i<planetsCount;i++) {
-  planets[i].gravity();
-  planets[i].display();
-  }
-  for (let i=0;i<planetsCount;i++) {
-  planets[i].update();
-  }
+    planets[i].gravity();
+    planets[i].display();
+    }
+    for (let i=0;i<planetsCount;i++) {
+    planets[i].update();
+    }
 }
 
 function pushAll() {
