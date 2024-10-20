@@ -44,25 +44,67 @@ function draw() {
   background(0);
   fill(255);
   stroke(255);
-  pushAll();
-  for (let j=0;j<100;j++) {
+  for (let j=0;j<1;j++) {
   update();
   }
-  popAll();
-  update();
 }
 
+function rk4() {
+  pushAll();
+  for (let i=0;i<planetsCount;i++) {
+  planets[i].k1=planets[i].gravity();
+  }
+popAll();
+for (let i=0;i<planetsCount;i++) {
+planets[i].updateHalf(planets[i].k1);
+}
+for (let i=0;i<planetsCount;i++) {
+planets[i].k2=planets[i].gravity();
+}
+popAll();
+for (let i=0;i<planetsCount;i++) {
+planets[i].updateHalf(planets[i].k2);
+}
+for (let i=0;i<planetsCount;i++) {
+planets[i].k3=planets[i].gravity();
+}
+popAll();
+for (let i=0;i<planetsCount;i++) {
+planets[i].update(planets[i].k3);
+}
+for (let i=0;i<planetsCount;i++) {
+planets[i].k4=planets[i].gravity();
+}
+popAll();
+for (let i=0;i<planetsCount;i++) {
+planets[i].update(planets[i].kAdd())
+}
+//k1= f(t,yn)
+//k2 = f(t + dt/2, yn+k1/2)
+//k3 = f(t+dt/2, y+ k2/2)
+//k4= f(t+dt, y+ k3)
+//y= y+1/6(k1,2k2,2k3,k4)
+}
 
 function update() {
+rk4();
   for (let i=0;i<planetsCount;i++) {
-    planets[i].gravity();
     planets[i].display();
     }
     for (let i=0;i<planetsCount;i++) {
     planets[i].update();
     }
 }
-
+function pushAll2() {
+  for (let i=0;i<planetsCount;i++) {
+    planets[i].push2();
+    }
+}
+function popAll2() {
+  for (let i=0;i<planetsCount;i++) {
+    planets[i].pop2();
+    }
+}
 function pushAll() {
   for (let i=0;i<planetsCount;i++) {
     planets[i].push();
@@ -84,7 +126,7 @@ this.acceleration=createVector(0,0,0);
 this.size=size;
 }
 gravity() {
-  this.acceleration=createVector(0.00000001,0.00000001,0.00000001);
+  this.acceleration=createVector(0.0001,0.0001,0.0001);
 for (let i=0;i<planetsCount;i++) {
 if (i!=this.index) {
 let r=this.position.dist(planets[i].position);
@@ -95,18 +137,35 @@ this.acceleration.add((p5.Vector.sub(planets[i].position,this.position)).setMag(
 }
 }
 }
+return this.acceleration;
 }
 
-update() {
-  this.velocity.add(this.acceleration);
+kAdd() {
+  this.acceleration=this.k1;
+  this.acceleration.add(this.k2.mult(0.5));
+  this.acceleration.add(this.k3.mult(0.5));
+  this.acceleration.add(this.k4);
+  this.acceleration.mult(1/3);
+  return this.acceleration;
+}
+
+updateHalf(accel=this.acceleration) {
+this.velocity.add(accel);
+this.position.add(this.velocity.mult(0.5));
+}
+update(accel=this.acceleration) {
+  this.velocity.add(accel);
 this.position.add(this.velocity);
 }
 display() {
 push();
-
 fill(255);
-//translate(p5.Vector.sub(this.position,planets[0].position));
-translate(this.position);
+translate(p5.Vector.sub(this.position,planets[0].position));
+// stroke(255,0,0)
+// line(0,0,this.acceleration.x*100,this.acceleration.y*100)
+// stroke(255,255,255)
+// line(0,0,this.k1.x*100,this.k1.y*100)
+//translate(this.position);
 sphere(this.size);
 pop();
 }
@@ -116,7 +175,16 @@ this.stashVel=(this.velocity).copy();
 this.stashPos=this.position.copy();
 this.stashAccel=this.acceleration.copy();
 }
-
+push2() {
+this.stashStashVel=this.velocity.copy();
+this.stashStashPos=this.position.copy();
+this.stashStashAccel=this.acceleration.copy();
+}
+pop2() {
+  this.velocity=this.stashStashVel.copy();
+  this.position=this.stashStashPos.copy();
+  this.acceleration=this.stashStashAccel.copy();
+}
 pop() {
 this.velocity=this.stashVel.copy();
 this.position=this.stashPos.copy();
