@@ -105,8 +105,8 @@ display() {
 push();
 
 fill(255);
-translate(p5.Vector.sub(this.position,planets[0].position));
-//translate(this.position);
+//translate(p5.Vector.sub(this.position,planets[0].position));
+translate(this.position);
 sphere(this.size);
 pop();
 }
