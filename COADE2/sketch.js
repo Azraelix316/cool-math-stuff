@@ -11,7 +11,7 @@ let distanceScale=1e-9;
   //TIME IS IN seconds/frame
   //DISTANCE IS IN METERS
   //MASS IS IN KG
-  let timeScale=86400;
+  let timeScale=86400*1;
 function setup() {
   g*=distanceScale*distanceScale*distanceScale*timeScale*timeScale;
   createCanvas(windowWidth, windowHeight,WEBGL);
@@ -44,9 +44,13 @@ function draw() {
   background(0);
   fill(255);
   stroke(255);
-  for (let j=0;j<1;j++) {
+  pushAll2();
+  for (let j=0;j<88;j++) {
   update();
   }
+  popAll2();
+  update();
+
 }
 
 function rk4() {
@@ -76,9 +80,7 @@ for (let i=0;i<planetsCount;i++) {
 planets[i].k4=planets[i].gravity();
 }
 popAll();
-for (let i=0;i<planetsCount;i++) {
-planets[i].update(planets[i].kAdd())
-}
+
 //k1= f(t,yn)
 //k2 = f(t + dt/2, yn+k1/2)
 //k3 = f(t+dt/2, y+ k2/2)
@@ -87,13 +89,25 @@ planets[i].update(planets[i].kAdd())
 }
 
 function update() {
-rk4();
+  rk4();
   for (let i=0;i<planetsCount;i++) {
     planets[i].display();
     }
+    // for (let i=0;i<planetsCount;i++) {
+    //   planets[i].updateHalf(planets[i].kAdd())
+    //   }
     for (let i=0;i<planetsCount;i++) {
-    planets[i].update();
-    }
+      planets[i].update(planets[i].k1);
+      }
+      
+      for (let i=0;i<planetsCount;i++) {
+      planets[i].velocity=planets[i].kAdd();
+      //planets[i].update();
+      }
+
+
+
+
 }
 function pushAll2() {
   for (let i=0;i<planetsCount;i++) {
@@ -126,7 +140,7 @@ this.acceleration=createVector(0,0,0);
 this.size=size;
 }
 gravity() {
-  this.acceleration=createVector(0.0001,0.0001,0.0001);
+  this.acceleration=createVector(0.000001,0.000001,0.000001);
 for (let i=0;i<planetsCount;i++) {
 if (i!=this.index) {
 let r=this.position.dist(planets[i].position);
@@ -141,12 +155,12 @@ return this.acceleration;
 }
 
 kAdd() {
-  this.acceleration=this.k1;
-  this.acceleration.add(this.k2.mult(0.5));
-  this.acceleration.add(this.k3.mult(0.5));
-  this.acceleration.add(this.k4);
-  this.acceleration.mult(1/3);
-  return this.acceleration;
+  //this.k1=this.k1.add(this.velocity).mult(1)
+  this.k2=this.k2.add(this.velocity).mult(1)
+  this.k3=this.k3.add(this.velocity).mult(1)
+  this.k4=this.k4.add(this.velocity).mult(1)
+  this.vector=(this.k2.add(this.k3.add(this.k4))).mult(1/3)
+  return this.vector;
 }
 
 updateHalf(accel=this.acceleration) {
