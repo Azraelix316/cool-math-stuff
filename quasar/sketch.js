@@ -14,7 +14,6 @@ function draw() {
     particles[i].display();
     particles[i].move(createVector(0,0))
     }
-  
 }
 
 
