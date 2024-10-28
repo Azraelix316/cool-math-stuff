@@ -1,6 +1,6 @@
 let planets = [];
 let ships = [];
-let planetsCount = 9;
+let planetsCount = 10;
 let shipsCount = 0;
 let g = 6.67e-11;
 let distanceScale = 1e-9;
@@ -11,7 +11,7 @@ let distanceScale = 1e-9;
 //TIME IS IN seconds/frame
 //DISTANCE IS IN METERS
 //MASS IS IN KG
-let timeScale = 86400;
+let timeScale = 86400*1;
 let start=0;
 let end=300;
 function setup() {
@@ -27,6 +27,7 @@ function setup() {
   planets[7] = new Planet(86.8e24, createVector(2867e9 * distanceScale, 0, 0), createVector(0, 6.8 * 1000 * distanceScale * timeScale, 0), 7, 51118 * distanceScale * 1000)
   planets[8] = new Planet(102e24, createVector(4515e9 * distanceScale, 0, 0), createVector(0, 5.4 * 1000 * distanceScale * timeScale, 0), 8, 49528 * distanceScale * 1000)
   planets[9] = new Planet(0.013e24, createVector(5906e9 * distanceScale, 0, 0), createVector(0, 4.7 * 1000 * distanceScale * timeScale, 0), 9, 2376 * distanceScale * 1000)
+  planets[10] = new Planet(0.073e24, createVector(0,10000000000, 0), createVector(0.0, 1.0*1000*timeScale*distanceScale, 0), 10, 3475 * distanceScale * 1000);
   // planets[0] = new Planet(10000,createVector(30,0,0),createVector(0,0.3,0),0,10)
   // planets[1] = new Planet(10000,createVector(10,0,0),createVector(0,0.5,0),1,10)
   // planets[2] = new Planet(10000,createVector(0,0,0),createVector(0,0.0,0),2,10)
@@ -52,6 +53,10 @@ function draw() {
   end++;
   for (let j=0;j<planetsCount;j++) {
     beginShape(LINES);
+    push()
+    translate(planets[j].positions[start])
+    sphere(planets[j].size)
+    pop()
   for (let i=start;i<end;i++) {
     // push()
     // translate(planets[j].positions[i])
@@ -65,7 +70,7 @@ function draw() {
   orbitControl();
   fill(255);
   stroke(255);
-  update();
+  //update();
   for (let j=0;j<planetsCount;j++) {
     planets[j].display();
   }
