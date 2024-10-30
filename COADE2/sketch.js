@@ -1,6 +1,7 @@
+p5.disableFriendlyErrors = true;
 let planets = [];
 let ships = [];
-let planetsCount = 10;
+let planetsCount = 12;
 let shipsCount = 0;
 let g = 6.67e-11;
 let distanceScale = 1e-9;
@@ -11,9 +12,10 @@ let distanceScale = 1e-9;
 //TIME IS IN seconds/frame
 //DISTANCE IS IN METERS
 //MASS IS IN KG
-let timeScale = 86400*1;
-let start=0;
-let end=300;
+let timeScale = 86400*4;
+let start=1;
+let end=100;
+let POV=3;
 function setup() {
   g *= distanceScale * distanceScale * distanceScale * timeScale * timeScale;
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -27,37 +29,41 @@ function setup() {
   planets[7] = new Planet(86.8e24, createVector(2867e9 * distanceScale, 0, 0), createVector(0, 6.8 * 1000 * distanceScale * timeScale, 0), 7, 51118 * distanceScale * 1000)
   planets[8] = new Planet(102e24, createVector(4515e9 * distanceScale, 0, 0), createVector(0, 5.4 * 1000 * distanceScale * timeScale, 0), 8, 49528 * distanceScale * 1000)
   planets[9] = new Planet(0.013e24, createVector(5906e9 * distanceScale, 0, 0), createVector(0, 4.7 * 1000 * distanceScale * timeScale, 0), 9, 2376 * distanceScale * 1000)
-  planets[10] = new Planet(0.073e24, createVector(0,10000000000, 0), createVector(0.0, 1.0*1000*timeScale*distanceScale, 0), 10, 3475 * distanceScale * 1000);
-  // planets[0] = new Planet(10000,createVector(30,0,0),createVector(0,0.3,0),0,10)
-  // planets[1] = new Planet(10000,createVector(10,0,0),createVector(0,0.5,0),1,10)
-  // planets[2] = new Planet(10000,createVector(0,0,0),createVector(0,0.0,0),2,10)
+  planets[10] = new Planet(0.073e24, createVector(1.496e11 * distanceScale,0.406e6*1000*distanceScale, 0), createVector(1.0*1000*distanceScale*timeScale,  1000 * timeScale * 29.78 * distanceScale, 0), 10, 3475 * distanceScale * 1000);
+  planets[11]= new Planet(0.01,createVector(1.496e11*distanceScale-1.5e6*1000 * distanceScale,0,0),createVector(0,0,0),11,3);
+  // planets[0] = new Planet(1e27,createVector(30,0,0),createVector(0.1,0.1,0),0,10)
+  // planets[1] = new Planet(1e25,createVector(0,100,0),createVector(0,0.0,0),1,10)
+  // planets[2] = new Planet(1e25,createVector(0,0,0),createVector(-0.05,-0.1,0),2,10)
 
   background(0);
   for (let i = 0; i < planetsCount; i++) {
     planets[i].push();
   }
   for (let j=0;j<planetsCount;j++) {
-    for (let i=start;i<end;i++) {
       planets[j].display();
       update();
-    }
   }
   frameRate(60);
+  //noLoop();
 }
 
 
 //main loop
 function draw() {
   background(0);
+  // rotateX(QUARTER_PI*6/4);
+  // rotateY(-QUARTER_PI);
+  if (start<end) {
+    for (let j=0;j<planetsCount;j++) {
+      planets[j].display();
+      update();
+  }
   start++;
-  end++;
+}
   for (let j=0;j<planetsCount;j++) {
-    beginShape(LINES);
-    push()
-    translate(planets[j].positions[start])
-    sphere(planets[j].size)
-    pop()
-  for (let i=start;i<end;i++) {
+    beginShape(POINTS);
+    if (start>=end) planets[j].positions.shift();
+  for (let i=0;i<start;i++) {
     // push()
     // translate(planets[j].positions[i])
     // sphere(planets[j].size)
@@ -65,12 +71,19 @@ function draw() {
     vertex(planets[j].positions[i].x,planets[j].positions[i].y,planets[j].positions[i].z);
   //line(planets[j].positions[i].x,planets[j].positions[i].y,planets[j].positions[i].z,planets[j].positions[i+1].x,planets[j].positions[i+1].y,planets[j].positions[i+1].z)
   }
+  if (j==10) {stroke(0,255,0);fill(0,255,0);}
+    push()
+    translate(planets[j].positions[start])
+    sphere(planets[j].size)
+    pop()
   endShape();
+stroke(255)
   }
-  orbitControl();
+  orbitControl(1.5,1.5,1.5);
   fill(255);
   stroke(255);
-  //update();
+  strokeWeight(1);
+  update();
   for (let j=0;j<planetsCount;j++) {
     planets[j].display();
   }
@@ -211,7 +224,11 @@ class Planet {
     // translate(p5.Vector.sub(this.position, planets[0].position));
     // sphere(this.size);
     // pop();
+    if (POV!=-1) {
+    this.positions.push(p5.Vector.sub(this.position, planets[POV].position));
+    } else {
     this.positions.push(this.position);
+    }
   }
 
   push() {

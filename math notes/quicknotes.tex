@@ -1,22 +1,15 @@
 \documentclass{article}
 \begin{document}
-\subsubsection* {bullseye physics}
-Find xVector, yVector speeds by calculating $sin(V_{initial}), cos(V_{initial})$\\
-$v_x = cos(V_{angle}) * V_{magnitude}$\\
-$pos_x = v_x * dT$\\
-$dT = \sqrt{2V_y/g}$\\
-$dX = V_i/g * sin(2V_{angle})$\\
-Launcher 6
-\\Height 40.5 cm
-\\Shot range @ Stage 1 = 87.5 cm
-\\$40.5 cm = 1/2 g * t ^2$
-\\$40.5 cm = 1/2 (980 cm/s) * t^2$
-\\$(40.5cm * 2 )/980cm/s = t^2$
-\\$81/980cm/s = t^2 = 91/980s$
-\\$ \sqrt{81/980} = t$
-\\$V_x = 87.5/t$
-\\$V_x = 87.5/0.28$
-\\$312 cm/s$
-\\$x=({-b+-\sqrt{b^2-4ac}})/2a$
-\\check units
+The Cubic Formula Derivation
+Consider the arbitrary cubic equation \[ ax^3 + bx^2 + cx + d = 0 \] for real numbers $a$, $b$, $c$, $d$ with $a\neq0$. By the fundamental theorem of algebra this equation has three roots $x_1$, $x_2$, $x_3$, over the complex numbers. Using the factor theorem gives the factorization \[ ax^3 + bx^2 + cx + d = a(x-x_1)(x-x_2)(x-x_3) . \] Expanding out the right-hand side gives \[ ax^3 - a(x_1+x_2+x_3)x^2 + a(x_1x_2+x_1x_3+x_2x_3)x - ax_1x_2x_3 , \] and equating coefficients with the original expression gives the following system of equations: \begin{align*} b &= - a(x_1+x_2+x_3) \\ c &= a(x_1x_2+x_1x_3+x_2x_3) \\ d &= - ax_1x_2x_3 \end{align*} And now it is non-obvious how to proceed and solve for $x_1$, $x_2$, $x_3$.
+
+Introduction of New Variables
+It turns out that it is fruitful to introduce the new variables $y_1$, $y_2$ by the definitions \begin{align*} y_1 &= a(x_1+\omega x_2+\omega^2 x_3) \\ y_2 &= a(x_1+\omega^2 x_2+\omega x_3) \end{align*} where $\omega=e^{2\pi i/3}=(-1+\sqrt{-3})/2$ is a cube root of unity. Then the following identities are satisfied: \begin{align*} y_1^3+y_2^3 &= -2b^3 + 9abc - 27a^2d \\ y_1y_2 &= b^2 - 3ac \end{align*} These can be found using Maple, for example.
+
+Solving for the Variables
+Note that $y_1^3$, $y_2^3$ are the roots of the quadratic polynomial $(y-y_1^3)(y-y_2^3)=y^2-(y_1^3+y_2^3)y+(y_1y_2)^3$. In light of the above identities, this polynomial can be written as \[ y^2 - (-2b^3+9abc-27a^2d)y + (b^2-3ac)^3 . \] From which the roots $y_1^3$ and $y_2^3$ can be found using the quadratic formula. Taking cube roots gives $y_1$ and $y_2$, although only 3 of the 9 possible choices for cube roots will work correctly; namely those which satisfy the identity $y_1y_2 = b^2 - 3ac$. This identity will not always be satisfied if one simply uses principal roots, but one can use a modified principal root function.
+
+Once $y_1$ and $y_2$ have been determined, one can solve the linear system \begin{align*} b &= - a(x_1+x_2+x_3) \\ y_1 &= a(x_1+\omega x_2+\omega^2 x_3) \\ y_2 &= a(x_1+\omega^2 x_2+\omega x_3) \end{align*} for $x_1$, $x_2$, and $x_3$. The solution is given by \begin{align*} x_1 &= (-b+y_1+y_2)/(3a) \\ x_2 &= (-b+\omega^2 y_1+\omega y_2)/(3a) \\ x_3 &= (-b+\omega y_1+\omega^2 y_2)/(3a) \end{align*} or more compactly by \[ x = \frac{-b+\omega^n y_1+\omega^{2n} y_2}{3a} \] for $n=0$, $1$, $2$.
+
+
 \end{document}
